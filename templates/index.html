@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html >
+<!--From https://codepen.io/frytyler/pen/EGdtg-->
+<head>
+  <meta charset="UTF-8">
+  <title>ML API and Google Maps Demo</title>
+  <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Arimo' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Hind:300' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Open+Sans+Condensed:300' rel='stylesheet' type='text/css'>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+<style>
+    /* Set the size of the map */
+    #map {
+    height: 500px;
+    width: 100%;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.map-container {
+    width: 80%;
+    margin: 20px auto; }
+
+.login {
+    width: 300px;
+    margin: 20px auto; 
+    text-align: center;
+}
+
+
+</style>  
+</head>
+
+<body>
+<div class="container">
+    <h3>CarPark Lot Prediction</h3>
+    <div class="login">
+	
+        
+     <!-- Main Input For Receiving Query to our ML -->
+        <form action="{{ url_for('predict')}}"method="post">
+    	  <input type="text" name="carpark name" placeholder="Carpark Name" required="required" />        
+          <button type="submit" class="btn btn-primary btn-block btn-large">Predict</button>
+          
+        </form>
+    <br>
+    <br>
+    {{ prediction_text }}
+    </div>
+
+    <div class="map-container">
+         <!--The div element for the map -->
+        <div id="map"></div>
+    </div>
+</div>
+
+<script>
+    // Initialize and add the map
+    function initMap() {
+        // The location of Uluru
+        var uluru = {lat: 1.3925834894180298, lng: 103.89491271972656};
+        // The map, centered at Uluru
+        var map = new google.maps.Map(
+            document.getElementById('map'), {zoom: 10, center: uluru});
+        // The marker, positioned at Uluru
+        var locations = [
+        {lng: 103.7910853879761, lat: 1.3069749437803302, title: 'AK52'},
+        {lng: 103.81028742157544, lat: 1.323710767102661, title: 'BL20'},
+        {lng: 103.84963978777893, lat: 1.3690187038397807, title: 'CK60'},
+        {lng: 103.88436190489217, lat: 1.3595030596501312, title: 'H3'},
+        {lng: 103.76415351948818, lat: 1.3168332635402935, title: 'J74M'},
+        {lng: 103.96354475838233, lat: 1.3349686749143463, title: 'PM30'},
+        {lng: 103.8317830294786, lat: 1.3051666874241126, title: 'SE30'},
+        {lng: 103.84524610737273, lat: 1.299604662341576, title: 'STM1'},
+        {lng: 103.85411946633889, lat: 1.3006403630539247, title: 'T1'},
+        {lng: 103.87171139018614, lat: 1.3119566459558283, title: 'U7'},
+        
+        // 更多位置和标题
+    ];
+
+    /// 为每个位置创建标记
+    locations.forEach(function(location) {
+        var marker = new google.maps.Marker({
+            position: {lat: location.lat, lng: location.lng},
+            map: map,
+            title: location.title
+        });
+
+        // 创建信息窗口并设置内容
+        var infoWindow = new google.maps.InfoWindow({
+            content:  '<div style="color: black;">' + location.title + '</div>'
+        });
+
+        // 添加点击事件监听器来显示信息窗口
+        marker.addListener('click', function() {
+            infoWindow.open(map, marker);
+        });
+    });
+}    
+</script>
+<!-- Load the Google Maps API -->
+<script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDC3a9jVOzuiEWljINiaDePFg3d7OuSwfQ&callback=initMap">
+</script>
+</body>
+</html>
